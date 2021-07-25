@@ -1,0 +1,15 @@
+FROM python:3.9
+
+EXPOSE 5000
+
+WORKDIR /home/tasker
+
+COPY secret secret
+COPY task_runners task_runners
+COPY common common
+
+ENV PYTHONPATH=":common:task_runners"
+
+RUN pip3 install -r task_runners/requirements.txt && pip3 install -r common/requirements.txt
+
+CMD python3 task_runners/services/sum2_service/start.py

@@ -1,0 +1,15 @@
+FROM python:3.9
+
+EXPOSE 5000
+
+WORKDIR /home/tasker
+
+COPY secret secret
+COPY api api
+COPY common common
+
+ENV PYTHONPATH=":common:api"
+
+RUN pip3 install -r api/requirements.txt && pip3 install -r common/requirements.txt
+
+CMD python3 api/tasker_api.py

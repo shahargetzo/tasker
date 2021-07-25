@@ -37,9 +37,11 @@ class QueueProvider:
             )
             self.logger.debug(f'got response from queue {queue_url}: {response}')
             if response:
-                message = response.get('Messages')[0]
-                self.client.delete_message(QueueUrl=queue_url,
-                                           ReceiptHandle=message['ReceiptHandle'])
-                return message
+                messages = response.get('Messages')
+                if messages:
+                    message = messages[0]
+                    self.client.delete_message(QueueUrl=queue_url,
+                                               ReceiptHandle=message['ReceiptHandle'])
+                    return message
         except Exception as e:
             raise QueueException(str(e))

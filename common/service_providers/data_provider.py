@@ -6,9 +6,10 @@ key_updated_at = 'updated_at'
 config = {
     'user': 'root',
     'password': 'root',
-    'host': 'db',
     'port': '3306',
-    'database': 'tasker'
+    # 'port': '32000',
+    'database': 'tasker',
+    'host': 'db'
 }
 
 
@@ -18,9 +19,9 @@ class DataProvider:
         self.connection = None
 
     def execute_with_data(self, sql: str, values: tuple) -> int:
-        cursor = self.connection.cursor()
+        cursor = self.get_cursor()
         self.logger.debug(f'executing {sql} with values {values}')
-        cursor.execute_with_data(sql, values)
+        cursor.execute(sql, values)
         self.connection.commit()
         cursor.close()
         self.connection.close()
@@ -41,28 +42,41 @@ class DataProvider:
         return True if rowcount == 1 else False
 
     def execute(self, sql):
-        self.connection.cursor.execute_with_data(sql)
-        self.connection.cursor.close()
+        cursor = self.get_cursor()
+        cursor.execute(sql)
+        cursor.fetchall()
+        cursor.close()
 
     def fetch_all(self):
-        fetch = self.connection.cursor.fetch_all()
-        self.connection.cursor.close()
+        cursor = self.get_cursor
+        fetch = cursor(buffered=True).fetchall()
+        cursor().close()
         return fetch
 
+    def get_cursor(self, buffered=False):
+        if self.connection is None:
+            self.create_connection()
+        if buffered:
+            return self.connection.cursor(buffered=True, dictionary=True)
+        return self.connection.cursor()
+
     def execute_and_fetch_all(self, sql):
-        self.connection.cursor.execute_with_data(sql)
-        return self.fetch_all()
+        cursor = self.get_cursor()
+        cursor.execute(sql)
+        fetch = cursor.fetchall()
+        cursor.close()
+        return fetch
 
     def update_row(self, table_name: str, to_update: dict, where: list):
         sql = f'update {table_name} set {key_updated_at}={int(round(time.time()))}'
         update_values = []
         for key_to_update in to_update:
-            sql += f', {key_to_update}=%s '
+            sql += f', {key_to_update}="%s" '
             update_values.append(to_update[key_to_update])
         if where:
             sql += ' where '
             for w in where:
-                sql += f' {w}=%s and'
+                sql += f' {w}="%s" and'
                 update_values.append(where[w])
             sql = sql[:len('and')]
         return self.execute_with_data(sql, tuple(update_values))
@@ -75,31 +89,38 @@ class DataProvider:
             sql += ' *'
         sql += f' from {table_name} '
         if where:
-            sql += f' where {",".join(where)}'
+            sql += f' WHERE {",".join(where)}'
         if limit:
             sql += f' limit {limit}'
-        self.connection.cursor.execute(sql)
-        db_records = self.connection.cursor.fetch_all()
+        cursor = self.get_cursor()
+        self.logger.debug(f'executing {sql}')
+        cursor.execute(sql)
+        db_records = cursor.fetchall()
+        # db_records = self.get_cursor(buffered=True).fetchall()
         ret_records = []
         for rec in db_records:
             ret_rec = {}
             i = 0
-            for col in self.connection.cursor.column_names:
+            for col in cursor.column_names:
                 ret_rec[col] = rec[i]
                 i += 1
             ret_records.append(ret_rec)
         self.connection.commit()
-        self.connection.cursor.close()
+        cursor.close()
         return ret_records
 
     def create_connection(self):
-        try:
-            self.connection = mysql.connector.connect(**config)
-        except Exception as e:
-            self.logger.error(f'failed to connect to db. error: {str(e)}, config: {config}')
+        if self.connection is None:
+            try:
+                self.connection = mysql.connector.connect(**config)
+            except Exception as e:
+                self.logger.error(f'failed to connect to db. error: {str(e)}, config: {config}')
+                raise
 
     def close_connection(self):
-        try:
-            self.connection.close()
-        except Exception as e:
-            self.logger.error(f'failed to close connection: {str(e)}')
+        if self.connection is not None:
+            try:
+                self.connection.close()
+            except Exception as e:
+                self.logger.error(f'failed to close connection: {str(e)}')
+            self.connection = None

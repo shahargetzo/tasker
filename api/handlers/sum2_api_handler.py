@@ -17,7 +17,7 @@ class Sum2TaskApiHandler(BaseTaskAPIHandler):
     def process(self, message: dict) -> dict:
         self.client_name = message[constants.key_client_name]
         sql_success = jobs.insert_job(self.data_provider, self.rid, self.client_name, constants.task_name_sum2,
-                                      self.params)
+                                      self.params, message.get(constants.key_ip))
         if not sql_success:
             self.logger.error('failed to enter request to db')
             return {constants.key_success: False,

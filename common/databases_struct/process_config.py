@@ -28,7 +28,7 @@ db_struct = [
 
 
 def get_process_status(data_provider, name: str):
-    where = [f'{key_process_name} = {name}']
+    where = [f'{key_process_name} = "{name}"']
     return data_provider.get_rows(table_name, where)
 
 

@@ -12,6 +12,7 @@ key_error = 'error'
 key_task_name = 'task_name'
 key_task_params = 'task_params'
 key_result = 'result'
+key_client_ip = 'client_ip'
 
 status_init = 'init'
 status_done = 'done'
@@ -46,30 +47,35 @@ db_struct = [
     }, {
         'name': key_result,
         'type': 'varchar(50)'
+    }, {
+        'name': key_client_ip,
+        'type': 'varchar(50)'
     },
 ]
 
 
-def insert_job(data_provider, rid: str, client_name: str, task_name: str, params: dict):
+def insert_job(data_provider, rid: str, client_name: str, task_name: str, params: dict, client_ip):
     keys = [key_rid,
             key_client_name,
             key_task_name,
             key_task_params,
             key_status,
             key_created_at,
-            key_updated_at]
+            key_updated_at,
+            key_client_ip]
     values = (rid,
               client_name,
               task_name,
               json.dumps(params),
               status_init,
               time.time(),
-              time.time())
+              time.time(),
+              client_ip)
     return data_provider.insert(table_name, keys, values)
 
 
 def get_job_by_rid(data_provider, rid: str):
-    where = [f'{key_rid} = {rid}']
+    where = [f'{key_rid} = "{rid}"']
     return data_provider.get_rows(table_name, where)
 
 

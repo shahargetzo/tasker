@@ -1,25 +1,47 @@
-version: "2"
+version: '3.6'
 services:
-  api:
-    build: ./Dockerfile
-    links:
-      - db
-    ports:
-      - "5000:5000"
+  #  api:
+  #    build:
+  #      context: .
+  #      dockerfile: api_dockerfile
+  #    links:
+  #      - db
+  #    depends_on:
+  #      - db
+  #    ports:
+  #      - "5000:5000"
 
 
   sum2:
-      build: ./task_runners/services/sum2_service
-      links:
-        - db
-      ports:
-        - "5001:5001"
+    build:
+      context: .
+      dockerfile: sum2_dockerfile
+    links:
+      - db
+    depends_on:
+      - db
+    ports:
+      - '5001:5001'
+    command: sh -c "/wait && pwd && ls -l && ./start.sh"
+    environment:
+      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+      - SERVICE_DIR=sum2_service
+
 
   db:
     image: mysql:5.7
     ports:
-      - "32000:3306"
+      - '32000:3306'
+    restart: always
+    command: --init-file /data/application/init.sql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+       - MYSQL_ROOT_PASSWORD='root'
+       - MYSQL_ROOT_USER='root'
+       - MYSQL_DATABASE=tasker
+       - MYSQL_USER='admin'
+       - MYSQL_PASSWORD='admin'
     volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
+      - ./db:/data/application/

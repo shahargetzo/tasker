@@ -29,7 +29,7 @@ class ProcessController(BaseController):
         for ptr in processes_to_run:
             if ptr not in running_processes:
                 process_status = process_config.get_process_status(self.data_provider, ptr)
-                if not process_status or process_status.get(process_config.key_status,
+                if not process_status or process_status[0].get(process_config.key_status,
                                                             '') != process_config.status_active:
                     self.logger.warning(
                         f'process {ptr} has no row in {process_config.table_name} or status os not actvie, not starting')

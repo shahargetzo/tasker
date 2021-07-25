@@ -9,6 +9,10 @@ class DBBuilder:
     def __init__(self, logger):
         self.logger = logger
         self.data_provider = DataProvider(logger)
+        self.data_provider.create_connection()
+
+    def finish(self):
+        self.data_provider.close_connection()
 
     def create_db_if_not_exist(self):
         db_config = config.copy()

@@ -28,7 +28,10 @@ class BaseController:
         except Exception as e:
             self.logger.error(
                 f'got exception while running. name: {self.name}, error: {str(e)}, trace: {traceback.format_exc()}')
-            process_config.update_process_status(self.data_provider, self.name, process_config.status_error)
+            try:
+                process_config.update_process_status(self.data_provider, self.name, process_config.status_error)
+            except Exception as e:
+                self.logger.error(f'failed to update process {self.name} status to {process_config.status_error}: {e}')
             self.kill_self()
         finally:
             self.data_provider.close_connection()
@@ -44,7 +47,7 @@ class BaseController:
     def start_listening(self):
         while True:
             process_status = process_config.get_process_status(self.data_provider, self.name)
-            if not process_status or process_status.get(process_config.key_status, '') != process_config.status_active:
+            if not process_status or process_status[0].get(process_config.key_status, '') != process_config.status_active:
                 self.logger.warning(
                     f'process {self.name} has no row in {process_config.table_name} or status is not active, killing self')
                 self.kill_self()
@@ -52,7 +55,7 @@ class BaseController:
                 message = self.queue_provider.get_queue_messages(self.queue_url)
                 if not message:
                     self.logger.debug(f'no messages to handle for {self.name}, queue {self.queue_url}')
-                    sleep(10)
+                    continue
                 message_to_handle = json.loads(message['Body'])
                 if 'kill' in message_to_handle:
                     self.logger.warning(f'got message {message_to_handle} with kill request, killing self')

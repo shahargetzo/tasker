@@ -11,7 +11,3 @@ class Sum2Controller(BaseController):
         handler = Sum2TaskHandler(self.logger, self.data_provider)
         return handler.run(message_to_handle)
 
-
-if __name__ == '__main__':
-    controller = Sum2Controller()
-    controller.run()
