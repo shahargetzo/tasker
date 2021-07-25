@@ -28,6 +28,10 @@ tasks_to_handlers = {
 def handle_error(error):
     return str(error), 500
 
+@app.route('/tets')
+def test():
+    return {constants.key_success: True}, 200
+
 
 @app.route('/get_requests_status')
 def get_requests_status():
@@ -40,7 +44,7 @@ def get_requests_status():
 
 
 @app.route('/process', methods=['POST'])
-def sum2():
+def process():
     request_data = request.get_json()
     task = request_data.get(constants.key_task)
     if not task or task not in tasks_to_handlers:

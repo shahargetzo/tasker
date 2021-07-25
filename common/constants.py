@@ -25,7 +25,7 @@ with open(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__
     aws_access_key_id = creds.get('aws_access_key_id')
     aws_secret_access_key = creds.get('aws_secret_access_key')
 
-api_port = 8000
+api_port = 5000
 
 logging_dir = os.path.join(str(Path.home()), 'tasker', 'log')
 

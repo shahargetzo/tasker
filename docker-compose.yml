@@ -1,16 +1,5 @@
 version: '3.6'
 services:
-  #  api:
-  #    build:
-  #      context: .
-  #      dockerfile: api_dockerfile
-  #    links:
-  #      - db
-  #    depends_on:
-  #      - db
-  #    ports:
-  #      - "5000:5000"
-
 
   sum2:
     build:
@@ -22,14 +11,31 @@ services:
       - db
     ports:
       - '5001:5001'
-    command: sh -c "/wait && pwd && ls -l && ./start.sh"
+    command: sh -c "/wait && echo start && python3 task_runners/services/sum2_service/start.py"
     environment:
       - WAIT_HOSTS=db:3306
       - WAIT_HOSTS_TIMEOUT=300
-      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_SLEEP_INTERVAL=20
       - WAIT_HOST_CONNECT_TIMEOUT=30
-      - SERVICE_DIR=sum2_service
+      - HOME=/home/tasker
 
+  api:
+    build:
+      context: .
+      dockerfile: api_dockerfile
+    links:
+      - db
+    depends_on:
+      - db
+    ports:
+      - '5000:5000'
+    command: sh -c "/wait && echo start && python3 api/tasker_api.py"
+    environment:
+      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=20
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+      - HOME=/home/tasker
 
   db:
     image: mysql:5.7
@@ -38,10 +44,11 @@ services:
     restart: always
     command: --init-file /data/application/init.sql
     environment:
-       - MYSQL_ROOT_PASSWORD='root'
-       - MYSQL_ROOT_USER='root'
-       - MYSQL_DATABASE=tasker
-       - MYSQL_USER='admin'
-       - MYSQL_PASSWORD='admin'
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_USER=root
+      - MYSQL_DATABASE=tasker
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_HOST=%
     volumes:
       - ./db:/data/application/
+
