@@ -1,4 +1,0 @@
-mysql
-boto3
-setproctitle
-mysql-connector-python

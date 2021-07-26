@@ -4,45 +4,89 @@ services:
   sum2:
     build:
       context: .
-      dockerfile: sum2_dockerfile
+      dockerfile: ./dockerfiles/dockerfile_sum2
     links:
       - db
     depends_on:
       - db
     ports:
       - '5001:5001'
-    command: sh -c "/wait && echo start && python3 task_runners/services/sum2_service/start.py"
+    command: sh -c "/wait && echo start && python3 src/task_runners/sum2_service/start.py"
     environment:
       - WAIT_HOSTS=db:3306
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=20
       - WAIT_HOST_CONNECT_TIMEOUT=30
       - HOME=/home/tasker
+    volumes:
+      - ./logs:/home/tasker/tasker_logs/
+
+  mult3:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/dockerfile_mult3
+    links:
+      - db
+    depends_on:
+      - db
+    ports:
+      - '5002:5002'
+    command: sh -c "/wait && echo start && python3 src/task_runners/mult3_service/start.py"
+    environment:
+      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=20
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+      - HOME=/home/tasker
+    volumes:
+      - ./logs:/home/tasker/tasker_logs/
+
+  surprise:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/dockerfile_surprise
+    links:
+      - db
+    depends_on:
+      - db
+    ports:
+      - '5003:5003'
+    command: sh -c "/wait && echo start && python3 src/task_runners/surprise_service/start.py"
+    environment:
+      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=20
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+      - HOME=/home/tasker
+    volumes:
+      - ./logs:/home/tasker/tasker_logs/
 
   api:
     build:
       context: .
-      dockerfile: api_dockerfile
+      dockerfile: ./dockerfiles/dockerfile_api
     links:
       - db
     depends_on:
       - db
     ports:
       - '5000:5000'
-    command: sh -c "/wait && echo start && python3 api/tasker_api.py"
+    command: sh -c "/wait && echo start && python3 src/api/tasker_api.py"
     environment:
       - WAIT_HOSTS=db:3306
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=20
       - WAIT_HOST_CONNECT_TIMEOUT=30
       - HOME=/home/tasker
+    volumes:
+      - ./logs:/home/tasker/tasker_logs/
 
   db:
     image: mysql:5.7
     ports:
       - '32000:3306'
     restart: always
-    command: --init-file /data/application/init.sql
+    command: --max-connections=1000 --wait-timeout=20 --max_allowed_packet=1G --init-file /data/application/init.sql
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_ROOT_USER=root
@@ -50,5 +94,5 @@ services:
       - MYSQL_PASSWORD=root
       - MYSQL_ROOT_HOST=%
     volumes:
-      - ./db:/data/application/
+      - ./db/init.sql:/data/application/init.sql
 

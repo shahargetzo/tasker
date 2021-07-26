@@ -11,9 +11,10 @@ CREATE TABLE jobs (
   task_name VARCHAR(50),
   task_params VARCHAR(100),
   status VARCHAR(50),
+  result VARCHAR(100),
   error VARCHAR(50),
   client_ip VARCHAR(50),
-  create_at INTEGER,
+  created_at INTEGER,
   updated_at INTEGER
 );
 
@@ -21,7 +22,7 @@ CREATE TABLE jobs (
 CREATE TABLE job_events (
   rid VARCHAR(50),
   event_name VARCHAR(50),
-  create_at INTEGER,
+  created_at INTEGER,
   updated_at INTEGER,
   primary key (rid, event_name)
 );
@@ -31,7 +32,7 @@ CREATE TABLE job_events (
 CREATE TABLE process_config (
   name VARCHAR(50),
   status VARCHAR(50),
-  create_at INTEGER,
+  created_at INTEGER,
   updated_at INTEGER
 );
 
@@ -40,4 +41,4 @@ INSERT INTO process_config
 VALUES
   ('sum2', 'active'),
   ('surprise', 'active'),
-  ('multiply3', 'active');
+  ('mult3', 'active');
