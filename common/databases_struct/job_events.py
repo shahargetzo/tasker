@@ -27,6 +27,7 @@ db_struct = [
     }
 ]
 
+event_name_start_api_process = 'start_api'
 event_name_insert_to_queue = 'insert_to_queue'
 event_name_start_process = 'start_process'
 event_name_end_process = 'end_process'

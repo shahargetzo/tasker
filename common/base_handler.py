@@ -23,7 +23,7 @@ class BaseTaskHandler:
                     constants.key_error_type: constants.error_validation}
         try:
             self.data_provider.create_connection()
-            self.prepare()
+            self.prepare(message)
             self.logger.info(f'start handling {self.task_name} request {self.rid} for client {self.client_name}')
             result = self.process(message)
             self.logger.info(f'done handling {self.task_name} request {self.rid} for client {self.client_name}')
@@ -33,7 +33,7 @@ class BaseTaskHandler:
                 f'got exception {str(e)} while handling {self.task_name} request {self.rid} '
                 f'for client {self.client_name}. trace: {traceback.format_exc()}')
             return {constants.key_success: False,
-                    constants.key_error: f'process failed due to {str(e)}',
+                    constants.key_error: f'process failed due to {str(e)}, trace: {traceback.format_exc()}',
                     constants.key_error_type: constants.error_process}
         finally:
             self.data_provider.close_connection()
@@ -41,7 +41,7 @@ class BaseTaskHandler:
     def validate(self, message):
         pass
 
-    def prepare(self):
+    def prepare(self, message):
         pass
 
     def process(self, message: dict) -> dict:

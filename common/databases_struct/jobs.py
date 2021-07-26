@@ -1,6 +1,9 @@
 import json
 import time
 
+from common.service_providers.data_provider import DataProvider
+from common.tasker_logger import Logger
+
 table_name = 'jobs'
 
 key_rid = 'rid'
@@ -62,7 +65,8 @@ def insert_job(data_provider, rid: str, client_name: str, task_name: str, params
             key_status,
             key_created_at,
             key_updated_at,
-            key_client_ip]
+            key_client_ip
+            ]
     values = (rid,
               client_name,
               task_name,
@@ -70,13 +74,16 @@ def insert_job(data_provider, rid: str, client_name: str, task_name: str, params
               status_init,
               time.time(),
               time.time(),
-              client_ip)
+              client_ip
+              )
     return data_provider.insert(table_name, keys, values)
 
 
 def get_job_by_rid(data_provider, rid: str):
     where = [f'{key_rid} = "{rid}"']
-    return data_provider.get_rows(table_name, where)
+    job = data_provider.get_rows(table_name, where)
+    if job:
+        return job[0]
 
 
 def update_job(data_provider, rid, status, result):
@@ -86,3 +93,8 @@ def update_job(data_provider, rid, status, result):
     if result:
         to_update[key_result] = result
     return data_provider.update_row(table_name, to_update, {key_rid: rid})
+
+if __name__ == '__main__':
+    logger = Logger('test')
+    dp = DataProvider(logger)
+    update_job(dp, 'tet_rid', 'done', 3)

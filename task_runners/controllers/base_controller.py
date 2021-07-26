@@ -7,12 +7,11 @@ import setproctitle
 from common.service_providers.data_provider import DataProvider
 from common.databases_struct import process_config
 from common.service_providers.queue_provider import QueueProvider, QueueException
-from common.tasker_logger import Logger
 
 
 class BaseController:
-    def __init__(self, name, queue_url):
-        self.logger = Logger(name)
+    def __init__(self, logger, name, queue_url):
+        self.logger = logger
         self.name = name
         self.queue_url = queue_url
         self.data_provider = DataProvider(self.logger)
@@ -54,7 +53,8 @@ class BaseController:
             try:
                 message = self.queue_provider.get_queue_messages(self.queue_url)
                 if not message:
-                    self.logger.debug(f'no messages to handle for {self.name}, queue {self.queue_url}')
+                    # self.logger.debug(f'no messages to handle for {self.name}, queue {self.queue_url}')
+                    sleep(2)
                     continue
                 message_to_handle = json.loads(message['Body'])
                 if 'kill' in message_to_handle:

@@ -14,7 +14,7 @@ key_task = 'task'
 
 task_name_sum2 = 'sum2'
 task_name_mult3 = 'mult3'
-task_name_process_controller = 'process_controller'
+task_name_surprise = 'surprise'
 api_name = 'api'
 
 error_validation = 'validation'
@@ -27,7 +27,8 @@ with open(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__
 
 api_port = 5000
 
-logging_dir = os.path.join(str(Path.home()), 'tasker', 'log')
+logging_dir = os.path.join(str(Path.home()), 'tasker_logs')
 
-sum2_queue_url = 'https://sqs.us-west-2.amazonaws.com/510208402325/sum2'
-mult3_queue_url = 'https://sqs.us-west-2.amazonaws.com/510208402325/mult3'
+queue_url_sum2 = 'https://sqs.us-west-2.amazonaws.com/510208402325/sum2'
+queue_url_mult3 = 'https://sqs.us-west-2.amazonaws.com/510208402325/mult3'
+queue_url_surprise = 'https://sqs.us-west-2.amazonaws.com/510208402325/surprise'

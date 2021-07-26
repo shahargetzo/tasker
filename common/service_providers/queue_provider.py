@@ -19,6 +19,7 @@ class QueueProvider:
                                    aws_access_key_id=constants.aws_access_key_id)
 
     def send_to_queue(self, url: str, message: dict):
+        self.logger.debug(f'sending message {message} to queue {url}')
         try:
             self.client.send_message(
                 QueueUrl=url,
@@ -26,7 +27,7 @@ class QueueProvider:
             )
             return True
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(f'failed sending message to queue: {str(e)}')
             return False
 
     def get_queue_messages(self, queue_url):
@@ -35,10 +36,10 @@ class QueueProvider:
                 QueueUrl=queue_url,
                 MaxNumberOfMessages=1
             )
-            self.logger.debug(f'got response from queue {queue_url}: {response}')
             if response:
                 messages = response.get('Messages')
                 if messages:
+                    self.logger.debug('successfully got a message, deleting from sqs')
                     message = messages[0]
                     self.client.delete_message(QueueUrl=queue_url,
                                                ReceiptHandle=message['ReceiptHandle'])

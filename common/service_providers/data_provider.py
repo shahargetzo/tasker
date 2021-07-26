@@ -1,6 +1,8 @@
 import mysql.connector
 import time
 
+from common.tasker_logger import Logger
+
 key_updated_at = 'updated_at'
 
 config = {
@@ -15,12 +17,12 @@ config = {
 
 class DataProvider:
     def __init__(self, logger):
-        self.logger = logger
+        self.logger: Logger = logger
         self.connection = None
 
     def execute_with_data(self, sql: str, values: tuple) -> int:
-        cursor = self.get_cursor()
         self.logger.debug(f'executing {sql} with values {values}')
+        cursor = self.get_cursor()
         cursor.execute(sql, values)
         self.connection.commit()
         cursor.close()
@@ -45,17 +47,20 @@ class DataProvider:
         cursor = self.get_cursor()
         cursor.execute(sql)
         cursor.fetchall()
+        self.connection.commit()
         cursor.close()
 
     def fetch_all(self):
-        cursor = self.get_cursor
-        fetch = cursor(buffered=True).fetchall()
+        cursor = self.get_cursor(buffered=True)
+        fetch = cursor.fetchall()
         cursor().close()
         return fetch
 
     def get_cursor(self, buffered=False):
-        if self.connection is None:
-            self.create_connection()
+        self.close_connection()
+        self.create_connection()
+        # if self.connection is None or not self.connection.is_connected():
+        #     self.create_connection()
         if buffered:
             return self.connection.cursor(buffered=True, dictionary=True)
         return self.connection.cursor()
@@ -69,17 +74,17 @@ class DataProvider:
 
     def update_row(self, table_name: str, to_update: dict, where: list):
         sql = f'update {table_name} set {key_updated_at}={int(round(time.time()))}'
-        update_values = []
+        # update_values = []
         for key_to_update in to_update:
-            sql += f', {key_to_update}="%s" '
-            update_values.append(to_update[key_to_update])
+            sql += f', {key_to_update}="{to_update[key_to_update]}" '
+            # update_values.append(to_update[key_to_update])
         if where:
             sql += ' where '
             for w in where:
-                sql += f' {w}="%s" and'
-                update_values.append(where[w])
-            sql = sql[:len('and')]
-        return self.execute_with_data(sql, tuple(update_values))
+                sql += f' {w}="{where[w]}" and'
+                # update_values.append(where[w])
+            sql = sql[:-len('and')]
+        return self.execute(sql)
 
     def get_rows(self, table_name: str, where: list, limit: int = 0, fields: list = None) -> list:
         sql = 'select '
@@ -112,6 +117,7 @@ class DataProvider:
     def create_connection(self):
         if self.connection is None:
             try:
+                self.logger.debug(f'creating connection with config {config}')
                 self.connection = mysql.connector.connect(**config)
             except Exception as e:
                 self.logger.error(f'failed to connect to db. error: {str(e)}, config: {config}')
