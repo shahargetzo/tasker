@@ -30,6 +30,8 @@ troubleshoot and comments:
 open issues:
 * scalling (probably requires some more docker-related work)
 * logs are not properly shared to runnig host
+* indexes in db- index jobs by client_name/rid (depends on product requirements), job_events by rid and process_config by process name
+* services dockerfiles are identical and differ from each other by env var. Need to be united to a single dockerfile that gets arg from docker-compose. 
 
 additional thoughts:
 * the design is simplified and meant to provide a solution to more complex tasks (sum 2 numbers does not really requires queues and multiservices :))
@@ -37,6 +39,7 @@ additional thoughts:
 * future- add more controlles for each service to share load (docker running configurations)
 * future- add more available tasks
 * future- connect to kibana
+* future- create db builder script that updates sql ini file automatically with db_struct files
 
 
 
