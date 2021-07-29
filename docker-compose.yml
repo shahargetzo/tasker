@@ -4,7 +4,10 @@ services:
   sum2:
     build:
       context: .
-      dockerfile: ./dockerfiles/dockerfile_sum2
+      dockerfile: ./dockerfiles/dockerfile_task
+      args:
+        - PORT=5001
+        - SERVICE_DIR=sum2_service
     links:
       - db
     depends_on:
@@ -24,7 +27,10 @@ services:
   mult3:
     build:
       context: .
-      dockerfile: ./dockerfiles/dockerfile_mult3
+      dockerfile: ./dockerfiles/dockerfile_task
+      args:
+        - PORT=5002
+        - SERVICE_DIR=mult3_service
     links:
       - db
     depends_on:
@@ -44,7 +50,10 @@ services:
   surprise:
     build:
       context: .
-      dockerfile: ./dockerfiles/dockerfile_surprise
+      dockerfile: ./dockerfiles/dockerfile_task
+      args:
+        - PORT=5003
+        - SERVICE_DIR=surprise_service
     links:
       - db
     depends_on:

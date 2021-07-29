@@ -1,6 +1,7 @@
 FROM python:3.9
-ENV SERVICE_DIR=mult3_service
-EXPOSE 5002
+ARG SERVICE_DIR
+ARG PORT
+EXPOSE $PORT
 
 WORKDIR /home/tasker
 RUN mkdir -p src/task_runners/
