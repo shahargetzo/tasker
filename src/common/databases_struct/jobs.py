@@ -21,41 +21,6 @@ status_init = 'init'
 status_done = 'done'
 status_error = 'error'
 
-db_struct = [
-    {
-        'name': key_rid,
-        'type': 'varchar(50)',
-        'rule': 'PRIMARY KEY'
-    }, {
-        'name': key_created_at,
-        'type': 'bigint'
-    }, {
-        'name': key_updated_at,
-        'type': 'bigint'
-    }, {
-        'name': key_client_name,
-        'type': 'varchar(50)'
-    }, {
-        'name': key_status,
-        'type': 'varchar(50)'
-    }, {
-        'name': key_error,
-        'type': 'varchar(50)'
-    }, {
-        'name': key_task_name,
-        'type': 'varchar(50)'
-    }, {
-        'name': key_task_params,
-        'type': 'varchar(100)'
-    }, {
-        'name': key_result,
-        'type': 'varchar(50)'
-    }, {
-        'name': key_client_ip,
-        'type': 'varchar(50)'
-    },
-]
-
 
 def insert_job(data_provider, rid: str, client_name: str, task_name: str, params: dict, client_ip):
     keys = [key_rid,

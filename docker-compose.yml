@@ -20,7 +20,6 @@ services:
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=20
       - WAIT_HOST_CONNECT_TIMEOUT=30
-      - HOME=/home/tasker
     volumes:
       - ./logs:/home/tasker/tasker_logs/
 
@@ -43,7 +42,6 @@ services:
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=20
       - WAIT_HOST_CONNECT_TIMEOUT=30
-      - HOME=/home/tasker
     volumes:
       - ./logs:/home/tasker/tasker_logs/
 
@@ -66,7 +64,6 @@ services:
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=20
       - WAIT_HOST_CONNECT_TIMEOUT=30
-      - HOME=/home/tasker
     volumes:
       - ./logs:/home/tasker/tasker_logs/
 
@@ -86,7 +83,6 @@ services:
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=20
       - WAIT_HOST_CONNECT_TIMEOUT=30
-      - HOME=/home/tasker
     volumes:
       - ./logs:/home/tasker/tasker_logs/
 

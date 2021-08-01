@@ -9,24 +9,6 @@ key_event_name = 'event_name'
 
 primary_key_rid_event_name = f'({key_rid, key_event_name})'
 
-db_struct = [
-    {
-        'name': key_rid,
-        'type': 'varchar(50)'
-    }, {
-        'name': key_created_at,
-        'type': 'bigint'
-    }, {
-        'name': key_updated_at,
-        'type': 'bigint'
-    }, {
-        'name': key_event_name,
-        'type': 'varchar(50)'
-    }, {
-        'rule': primary_key_rid_event_name
-    }
-]
-
 event_name_start_api_process = 'start_api'
 event_name_end_api_process = 'end_api'
 event_name_insert_to_queue = 'insert_to_queue'

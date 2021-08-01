@@ -1,17 +1,22 @@
 FROM python:3.9
 ARG SERVICE_DIR
 ARG PORT
+
+ENV HOME=/home/tasker
+
 EXPOSE $PORT
 
 WORKDIR /home/tasker
 RUN mkdir -p src/task_runners/
-COPY ../secret secret
+COPY ../secret $HOME/secret
 COPY ../src/common src/common
 COPY ../src/task_runners/*.py src/task_runners/
+COPY ../db/init.sql $HOME/init.sql
 
 ENV PYTHONPATH=":src"
 
-RUN pip3 install -r src/common/requirements.txt
+RUN pip3 install --upgrade pip && pip3 install -r src/common/requirements.txt
+RUN python3 src/common/databases_struct/db_validator.py
 COPY ../src/task_runners/$SERVICE_DIR src/task_runners/$SERVICE_DIR
 
 ENV WAIT_VERSION 2.7.2

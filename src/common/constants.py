@@ -23,7 +23,9 @@ api_name = 'api'
 error_validation = 'validation'
 error_process = 'process'
 
-with open(os.path.join(str(Path.home()), 'secret', 'cred.txt')) as f:
+creds_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), 'secret',
+                               'cred.txt')
+with open(creds_file_path) as f:
     creds = json.loads(f.read())
     aws_access_key_id = creds.get('aws_access_key_id')
     aws_secret_access_key = creds.get('aws_secret_access_key')
