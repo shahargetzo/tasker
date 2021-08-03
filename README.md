@@ -42,7 +42,6 @@ troubleshoot and comments:
 open issues:
 * scaling (probably requires some more docker-related work)
 * logs are not properly shared to running host
-* get_requests_status method should use client_name index
 
 additional thoughts:
 * the design is simplified and meant to provide a solution to more complex tasks (sum 2 numbers does not really requires queues and multiservices :))
