@@ -38,7 +38,6 @@ additional thoughts:
 * future- add more controlles for each service to share load (docker running configurations)
 * future- add more available tasks
 * future- connect to kibana
-* future- create db builder script that updates sql ini file automatically with db_struct files
 
 
 
