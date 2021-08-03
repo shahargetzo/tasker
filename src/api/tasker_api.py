@@ -46,7 +46,8 @@ def get_requests_status():
     request_data = request.get_json()
     client_name = request_data.get(constants.key_client_name)
     if client_name:
-        job_status = data_provider.get_rows(jobs.table_name, [DBWhere(jobs.key_client_name, '=', client_name)])
+        job_status = data_provider.get_rows(jobs.table_name, [DBWhere(jobs.key_client_name, '=', client_name)],
+                                            index=jobs.key_client_name)
         return {x[jobs.key_rid]: x for x in job_status}
     return {constants.key_error: 'no client_name'}, 400
 

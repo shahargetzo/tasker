@@ -1,4 +1,5 @@
 import time
+
 import mysql.connector
 
 from src.common.service_providers.data_provider import DBWhere
@@ -38,9 +39,9 @@ def insert_task(data_provider, client_name: str, task_name: str, params: dict, r
 
 
 def get_result_if_exists(data_provider, task_name: str, task_params: dict):
-    where = [DBWhere(key_task_name, '=', task_name),
-             DBWhere(key_task_params, '=', sql_utils.dict_to_b64_str(task_params))]
-    cached_task = data_provider.get_rows(table_name, where)
+    cached_task = data_provider.get_rows(table_name, [DBWhere(key_task_name, '=', task_name),
+                                                      DBWhere(key_task_params, '=',
+                                                              sql_utils.dict_to_b64_str(task_params))])
     if cached_task:
         cached_task = cached_task[0]
         cached_task[key_task_params] = sql_utils.b64_str_to_dict(cached_task[key_task_params])

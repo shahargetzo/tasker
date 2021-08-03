@@ -50,8 +50,7 @@ def insert_job(data_provider, rid: str, client_name: str, task_name: str, params
 
 
 def get_job_by_rid(data_provider, rid: str):
-    where = [DBWhere(key_rid, '=', rid)]
-    job = data_provider.get_rows(table_name, where)
+    job = data_provider.get_rows(table_name, [DBWhere(key_rid, '=', rid)])
     if job:
         return job[0]
 

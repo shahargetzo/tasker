@@ -60,12 +60,6 @@ class DataProvider:
         self.connection.commit()
         cursor.close()
 
-    def fetch_all(self):
-        cursor = self.get_cursor(buffered=True)
-        fetch = cursor.fetchall()
-        cursor().close()
-        return fetch
-
     def get_cursor(self, buffered=False):
         self.close_connection()
         self.create_connection()
@@ -74,13 +68,6 @@ class DataProvider:
         if buffered:
             return self.connection.cursor(buffered=True, dictionary=True)
         return self.connection.cursor()
-
-    def execute_and_fetch_all(self, sql):
-        cursor = self.get_cursor()
-        cursor.execute(sql)
-        fetch = cursor.fetchall()
-        cursor.close()
-        return fetch
 
     def update_row(self, table_name: str, to_update: dict, where: list):
         sql = f'update {table_name} set {key_updated_at}={int(round(time.time()))}'
@@ -94,13 +81,16 @@ class DataProvider:
             sql = sql[:-len('and')]
         return self.execute(sql)
 
-    def get_rows(self, table_name: str, where: list = None, limit: int = 0, fields: list = None) -> list:
+    def get_rows(self, table_name: str, where: list = None, limit: int = None, fields: list = None,
+                 index: str = None) -> list:
         sql = 'select '
         if fields:
             sql += ','.join(fields)
         else:
             sql += ' *'
         sql += f' from {table_name} '
+        if index:
+            sql += f' use index ({index}) '
         if where:
             sql += f' WHERE '
             for i, w in enumerate(where):
