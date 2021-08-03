@@ -69,8 +69,11 @@ def set_processes_status():
         if p_status not in process_config.available_statuses:
             updated.update({p: {constants.key_error: f'got unknown status got process {p}: {p_status}'}})
             continue
-        process_config.update_process_status(data_provider, p, p_status)
-        updated[p] = f'updated to  {p_status}'
+        try:
+            process_config.update_process_status(data_provider, p, p_status)
+            updated[p] = f'updated to {p_status}'
+        except Exception as e:
+            updated[p] = {constants.key_error: f'failed to update status to {p_status}: {e}'}
     return updated
 
 

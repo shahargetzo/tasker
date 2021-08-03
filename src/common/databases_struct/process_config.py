@@ -10,8 +10,14 @@ key_status = 'status'
 status_active = 'active'
 status_error = 'error'
 status_queue = 'queue'
+status_suspended = 'suspended'
 
-available_statuses = [status_active, status_error, status_queue]
+available_statuses = [
+    status_active,
+    status_error,
+    status_suspended,
+    status_queue
+]
 
 
 def get_process_status(data_provider, name: str):

@@ -21,7 +21,7 @@ task_name_sum2 = 'sum2'
 task_name_mult3 = 'mult3'
 task_name_surprise = 'surprise'
 
-available_processes = [task_name_mult3, task_name_mult3, task_name_surprise]
+available_processes = [task_name_mult3, task_name_sum2, task_name_surprise]
 
 api_name = 'api'
 
