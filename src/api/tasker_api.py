@@ -57,7 +57,7 @@ def get_processes_status():
     return {x[process_config.key_process_name]: x[process_config.key_status] for x in processes_status}
 
 
-@app.route('/set_processes_status')
+@app.route('/set_processes_status', methods=['POST'])
 def set_processes_status():
     request_data = request.get_json()
     updated = {}
