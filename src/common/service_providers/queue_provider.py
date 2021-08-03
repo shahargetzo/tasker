@@ -18,7 +18,7 @@ class QueueProvider:
                                    aws_secret_access_key=constants.aws_secret_access_key,
                                    aws_access_key_id=constants.aws_access_key_id)
 
-    def send_to_queue(self, url: str, message: dict):
+    def send_to_queue(self, url: str, message: dict) -> bool:
         self.logger.debug(f'sending message {message} to queue {url}')
         try:
             self.client.send_message(

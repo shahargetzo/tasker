@@ -1,8 +1,11 @@
 import time
+import typing
+from dataclasses import dataclass
 
 import mysql.connector
 
 from src.common.tasker_logger import Logger
+from src.common.utils import sql_utils
 
 key_updated_at = 'updated_at'
 
@@ -10,10 +13,16 @@ config = {
     'user': 'root',
     'password': 'root',
     'port': '3306',
-    # 'port': '32000',
     'database': 'tasker',
     'host': 'db'
 }
+
+
+@dataclass
+class DBWhere:
+    field: str
+    operation: str
+    value: 'typing.Any'
 
 
 class DataProvider:
@@ -75,10 +84,8 @@ class DataProvider:
 
     def update_row(self, table_name: str, to_update: dict, where: list):
         sql = f'update {table_name} set {key_updated_at}={int(round(time.time()))}'
-        # update_values = []
         for key_to_update in to_update:
             sql += f', {key_to_update}="{to_update[key_to_update]}" '
-            # update_values.append(to_update[key_to_update])
         if where:
             sql += ' where '
             for w in where:
@@ -95,12 +102,20 @@ class DataProvider:
             sql += ' *'
         sql += f' from {table_name} '
         if where:
-            sql += f' WHERE {",".join(where)}'
+            sql += f' WHERE '
+            for i, w in enumerate(where):
+                assert isinstance(w, DBWhere)
+                sql += f'{w.field} {w.operation} {sql_utils.get_field_val_for_query(w.value)}'
+                if i < len(where) - 1:
+                    sql += ' and '
         if limit:
             sql += f' limit {limit}'
         cursor = self.get_cursor()
         self.logger.debug(f'executing {sql}')
-        cursor.execute(sql)
+        try:
+            cursor.execute(sql)
+        except Exception as e:
+            raise Exception(f'got exception while executing {sql}: {e}')
         db_records = cursor.fetchall()
         # db_records = self.get_cursor(buffered=True).fetchall()
         ret_records = []

@@ -5,11 +5,13 @@ from pathlib import Path
 key_client_name = 'client_name'
 key_params = 'params'
 key_success = 'success'
+key_result = 'result'
 key_error = 'error'
 key_error_type = 'error_type'
 key_rid = 'rid'
 key_ip = 'ip'
 key_task = 'task'
+key_cached = 'cached'
 
 key_param_first = 'first'
 key_param_second = 'second'
@@ -18,6 +20,9 @@ key_param_third = 'third'
 task_name_sum2 = 'sum2'
 task_name_mult3 = 'mult3'
 task_name_surprise = 'surprise'
+
+available_processes = [task_name_mult3, task_name_mult3, task_name_surprise]
+
 api_name = 'api'
 
 error_validation = 'validation'

@@ -1,11 +1,14 @@
+import argparse
 import os
 from pathlib import Path
 
-from src.common.databases_struct import process_config, job_events, jobs
+from src.common.databases_struct import process_config, job_events, jobs, tasks_cache
 
 db_struct_files = {process_config.table_name: process_config,
                    job_events.table_name: job_events,
-                   jobs.table_name: jobs}
+                   jobs.table_name: jobs,
+                   tasks_cache.table_name: tasks_cache}
+default_sql_ini_path = os.path.join(str(Path.home()), 'init.sql')
 
 
 def validate_db_struct(statement):
@@ -27,8 +30,7 @@ def validate_db_struct(statement):
         raise Exception(f'keys {extra_in_db_struct} are missing from sql ini of {table_name}')
 
 
-def validate_tables():
-    sql_ini_file_path = os.path.join(str(Path.home()), 'init.sql')
+def validate_tables(sql_ini_file_path):
     with open(sql_ini_file_path) as f:
         ini_content = f.read()
         statements = ini_content.split(';')
@@ -39,4 +41,7 @@ def validate_tables():
 
 
 if __name__ == '__main__':
-    validate_tables()
+    parser = argparse.ArgumentParser(description='validate db fields in init.sql file match database_struct *.py files')
+    parser.add_argument('-f', '--file', type=str, help='path of init.sql file', default=default_sql_ini_path)
+    args = parser.parse_args()
+    validate_tables(args.file)

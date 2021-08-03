@@ -8,7 +8,7 @@ from src.api.handlers.sum2_api_handler import Sum2TaskApiHandler
 from src.api.handlers.surprise_api_handler import SurpriseTaskApiHandler
 from src.common import constants
 from src.common.databases_struct import process_config, jobs
-from src.common.service_providers.data_provider import DataProvider
+from src.common.service_providers.data_provider import DataProvider, DBWhere
 from src.common.service_providers.queue_provider import QueueProvider
 from src.common.tasker_logger import Logger
 
@@ -46,7 +46,7 @@ def get_requests_status():
     request_data = request.get_json()
     client_name = request_data.get(constants.key_client_name)
     if client_name:
-        job_status = data_provider.get_rows(jobs.table_name, [f'{jobs.key_client_name}="{client_name}"'])
+        job_status = data_provider.get_rows(jobs.table_name, [DBWhere(jobs.key_client_name, '=', client_name)])
         return {x[jobs.key_rid]: x for x in job_status}
     return {constants.key_error: 'no client_name'}, 400
 
@@ -55,6 +55,23 @@ def get_requests_status():
 def get_processes_status():
     processes_status = data_provider.get_rows(process_config.table_name)
     return {x[process_config.key_process_name]: x[process_config.key_status] for x in processes_status}
+
+
+@app.route('/set_processes_status')
+def set_processes_status():
+    request_data = request.get_json()
+    updated = {}
+    for p in request_data:
+        if p not in constants.available_processes:
+            updated.update({p: {constants.key_error: f'got unknown process: {p}'}})
+            continue
+        p_status = request_data[p]
+        if p_status not in process_config.available_statuses:
+            updated.update({p: {constants.key_error: f'got unknown status got process {p}: {p_status}'}})
+            continue
+        process_config.update_process_status(data_provider, p, p_status)
+        updated[p] = f'updated to  {p_status}'
+    return updated
 
 
 @app.route('/process', methods=['POST'])

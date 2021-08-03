@@ -1,8 +1,8 @@
-from src.api.handlers.base_task_api_handler import BaseTaskAPIHandler
+from src.api.handlers.base_api_handler import BaseAPIHandler
 from src.common import constants
 
 
-class Mult3TaskApiHandler(BaseTaskAPIHandler):
+class Mult3TaskApiHandler(BaseAPIHandler):
     def __init__(self, logger, data_provider, queue_provider):
         super().__init__(logger, data_provider, queue_provider, constants.task_name_mult3, constants.queue_url_mult3,
                          [constants.key_param_first,

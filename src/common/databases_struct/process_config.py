@@ -1,3 +1,5 @@
+from src.common.service_providers.data_provider import DBWhere
+
 table_name = 'process_config'
 
 key_process_name = 'name'
@@ -9,9 +11,11 @@ status_active = 'active'
 status_error = 'error'
 status_queue = 'queue'
 
+available_statuses = [status_active, status_error, status_queue]
+
 
 def get_process_status(data_provider, name: str):
-    where = [f'{key_process_name} = "{name}"']
+    where = [DBWhere(key_process_name, '=', name)]
     return data_provider.get_rows(table_name, where)
 
 

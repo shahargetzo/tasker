@@ -1,9 +1,7 @@
 import random
 
 from src.common import constants
-from src.common.databases_struct import job_events
-from src.common.databases_struct import jobs
-from src.task_runners.base_task_queue_handler import BaseTaskQueueHandler
+from src.task_runners.base_queue_handler import BaseQueueHandler
 
 sentences = [
     'trilili_tralala',
@@ -17,14 +15,10 @@ sentences = [
 ]
 
 
-class SurpriseTaskHandler(BaseTaskQueueHandler):
+class SurpriseTaskHandler(BaseQueueHandler):
     def __init__(self, logger, data_provider):
         super().__init__(logger, data_provider, constants.task_name_surprise)
 
-    def process(self, message: dict) -> dict:
-        job_events.insert_event(self.data_provider, self.rid, job_events.event_name_start_process)
+    def get_result(self, params: dict) -> str:
         sentence = random.choice(sentences)
-        result = f'{sentence}_{self.params[constants.key_param_first]}'
-        jobs.update_job(self.data_provider, self.rid, jobs.status_done, result)
-        job_events.insert_event(self.data_provider, self.rid, job_events.event_name_end_process)
-        return {constants.key_success: True}
+        return f'{sentence}_{self.params[constants.key_param_first]}'
